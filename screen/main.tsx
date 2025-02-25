@@ -1,24 +1,17 @@
-import { getVerificationUrl, initializeVerification } from '../service/verification';
+// import { getVerificationUrl } from '../service/verification';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, PermissionsAndroid, Alert } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+import Verify from './verify';
 
 const Main = ({ navigation }: { navigation: any }) => {
     const handleVerify = async () => {
         try {
-            const sessionUrl = await getVerificationUrl();
-
-            navigation.navigate('Verify', { sessionUrl });
+            navigation.navigate(Verify as never);
         } catch (error) {
             console.error('Error during verification initialization:', error);
         }
     };
 
-    const fetchDeviceId = async () => {
-        const deviceId = await DeviceInfo.getUniqueId(); 
-        console.log("Device ID:", deviceId);  
-    };
-    
     const [permissionGranted, setPermissionGranted] = useState(false);
 
     const checkPermission = async () => {
@@ -26,10 +19,8 @@ const Main = ({ navigation }: { navigation: any }) => {
             const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
             if (granted) {
                 setPermissionGranted(true);
-                console.log('Camera permission is granted');
             } else {
                 setPermissionGranted(false);
-                console.log('Camera permission is denied');
             }
         } catch (error) {
             console.warn(error);
@@ -50,11 +41,9 @@ const Main = ({ navigation }: { navigation: any }) => {
             );
 
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('Camera permission granted');
                 setPermissionGranted(true);
                 Alert.alert('Permission Granted', 'You can now access the camera.');
             } else {
-                console.log('Camera permission denied');
                 setPermissionGranted(false);
                 Alert.alert('Permission Denied', 'Camera access is required to use this feature.');
             }
@@ -78,7 +67,6 @@ const Main = ({ navigation }: { navigation: any }) => {
             </Text>
             <Button title="Check Camera Permission" onPress={checkPermission} />
             <Button title="Request Camera Permission" onPress={requestPermission} />
-            <Button title="Get Device ID" onPress={fetchDeviceId} />
         </View>
     );
 };
